@@ -1,15 +1,15 @@
-﻿using System.Text;
-using Identity.Application;
+﻿using Identity.Application;
+using Identity.Domain.Entities;
 using Identity.Facade.User;
 using Identity.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
 using ShareMicroservice.Common.Class.ApiResult;
+using System.Text;
 
 namespace IdentityApi.Config;
 
@@ -41,6 +41,12 @@ public static class WebApiServiceExtensions
         });
 
         #endregion
+
+        services.AddOpenApi();
+
+        services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<IdentityContext>()
+                .AddDefaultTokenProviders();
 
         #region MediatR
 
@@ -98,43 +104,43 @@ public static class WebApiServiceExtensions
         #endregion
 
         #region Swagger
+        /*
+                services.AddEndpointsApiExplorer();
 
-        services.AddEndpointsApiExplorer();
-
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Identity API",
-                Version = "v1"
-            });
-
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Enter JWT Token"
-            });
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+                services.AddSwaggerGen(options =>
                 {
-                    new OpenApiSecurityScheme
+                    options.SwaggerDoc("v1", new OpenApiInfo
                     {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-        });
+                        Title = "Identity API",
+                        Version = "v1"
+                    });
 
+                    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Enter JWT Token"
+                    });
+
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                                {
+                                    new OpenApiSecurityScheme
+                                    {
+                                        Reference = new OpenApiReference
+                                        {
+                                            Type = ReferenceType.SecurityScheme,
+                                            Id = "Bearer"
+                                        }
+                                    },
+                                    Array.Empty<string>()
+                                }
+                    });
+                });
+        */
         #endregion
 
         #region Api Validation Error
