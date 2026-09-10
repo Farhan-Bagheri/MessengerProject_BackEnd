@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace ShareMicroservice.Common.Class.ApiResult;
+﻿namespace ShareMicroservice.Common.Class.ApiResult;
 
 public class ApiResult<T>
 {
@@ -23,14 +21,14 @@ public class ApiResult<T>
     {
     }
 
-    public static ApiResult<T> SuccessResult(T data, string message = "Successfully", int statusCode = 200)
+    public static ApiResult<T> SuccessResult(T data, string message = "Successfully")
     {
-        return new ApiResult<T>(true, statusCode, data, message);
+        return new ApiResult<T>(true, 200, data, message);
     }
 
-    public static ApiResult<T> Failure(int statusCode, List<string> errors = null, string message = "Error")
+    public static ApiResult<T> Failure(string message = "Error", List<string> errors = null)
     {
-        return new ApiResult<T>(false, statusCode, default, message, errors);
+        return new ApiResult<T>(false, 400, default, message, errors);
     }
 }
 
@@ -54,8 +52,8 @@ public class ApiResult
         return new ApiResult(true, 200, message);
     }
 
-    public static ApiResult Failure(string message, int statusCode, List<string> errors = null)
+    public static ApiResult Failure(string message, List<string> errors = null)
     {
-        return new ApiResult(false, statusCode, message, errors);
+        return new ApiResult(false, 400, message, errors);
     }
 }

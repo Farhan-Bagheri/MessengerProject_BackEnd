@@ -1,43 +1,56 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using MediatR;
-using Microsoft.IdentityModel.Tokens;
-using ShareMicroservice.Application.Common;
 
 namespace Identity.Application.Command.Jwt;
 
-public record GeneratedJwtTokenForUserCommand(Domain.Entities.User User, string JwtKey, int JwtExpiry)
-    : IRequest<ServiceResult>;
+public record GeneratedJwtTokenForUserCommand(
+    string UserId,
+    string JwtKey,
+    int JwtExpiry)
+    : IRequest<string>;
 
-public class GeneratedJwtTokenForUserCommandHandler : IRequestHandler<GeneratedJwtTokenForUserCommand, ServiceResult>
+public class GeneratedJwtTokenForUserCommandHandler(
+    UserManager<Domain.Entities.User> userManager)
+    : IRequestHandler<GeneratedJwtTokenForUserCommand, string>
 {
-    public async Task<ServiceResult> Handle(GeneratedJwtTokenForUserCommand request,
+    public async Task<string> Handle(
+        GeneratedJwtTokenForUserCommand request,
         CancellationToken cancellationToken)
     {
         try
         {
+            var user = await userManager.FindByIdAsync(request.UserId);
+
+            if (user == null)
+                return String.Empty;
+
+            var claims = new[]
             {
-                var claims = new[]
-                {
-                    new Claim("Id", request.User.Id.ToString()),
-                    new Claim("Email", request.User.Email!),
-                    new Claim("UserName", request.User.UserName!),
-                    new Claim("Jti", Guid.NewGuid().ToString())
-                };
+                new Claim("Id", user.Id.ToString()),
+                new Claim("Email", user.Email ?? string.Empty),
+                new Claim("UserName", user.UserName ?? string.Empty),
+                new Claim("Jti", Guid.NewGuid().ToString())
+            };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(request.JwtKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(request.JwtKey));
 
-                var token = new JwtSecurityToken(
-                    //issuer: _jwtIssuer,
-                    //audience: _jwtAudience,
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(request.JwtExpiry),
-                    signingCredentials: creds);
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
 
-                return ServiceResult.Success(token.ToString());
-            }
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(request.JwtExpiry),
+                signingCredentials: credentials);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return tokenString;
         }
         catch (Exception ex)
         {

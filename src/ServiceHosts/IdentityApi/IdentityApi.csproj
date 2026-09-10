@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Modules\Identity\Identity.Facade\Identity.Facade.csproj" />
+		<ProjectReference Include="..\..\Modules\Identity\Identity.Configuration\Identity.Configuration.csproj" />
 		<ProjectReference Include="..\ShareMicroservice\ShareMicroservice.csproj" />
 	</ItemGroup>
 

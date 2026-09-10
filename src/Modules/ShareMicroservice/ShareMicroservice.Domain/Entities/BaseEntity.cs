@@ -20,5 +20,5 @@ public class BaseEntity
     /// <summary>
     /// IsDelete
     /// </summary>
-    public bool IsDelete { get; set; }
+    public bool IsDelete { get; set; } = false;
 }

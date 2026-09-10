@@ -9,7 +9,7 @@ public class ServiceResult
     public string? Message { get; set; }
     public List<string>? Errorrs { get; set; }
 
-    public static ServiceResult Success(object? data = null, string? message = "Success")
+    public static ServiceResult Success(object? data = null, string? message = "عملیات با موفقیت انجام شد.")
     {
         return new ServiceResult
         {
@@ -19,12 +19,11 @@ public class ServiceResult
         };
     }
 
-    public static ServiceResult Error(object? data = null, string? message = "Error", List<string>? errors = null)
+    public static ServiceResult Error(string? message = "عملیات شکست خورد.", List<string>? errors = null)
     {
         return new ServiceResult
         {
             IsSuccess = false,
-            Data = data,
             Message = message,
             Errorrs = errors
         };

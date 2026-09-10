@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Identity.Application.Command.Jwt;
+﻿using Identity.Application.Command.Jwt;
 using Identity.Application.Command.User.Create;
 using Identity.Application.Query.User;
 using MediatR;
@@ -14,15 +12,13 @@ public interface IUserFacade
 
     Task<ServiceResult> CreateUser(CreateUserCommand request, CancellationToken cancellationToken);
 
-    Task<ServiceResult> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request,
-        CancellationToken cancellationToken);
+    Task<string> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken);
 
     #endregion
 
     #region Query
 
-    Task<bool> GetUserExistByUserNameAndPassword(RequestGetUserExistByUserNameAndPassword request,
-        CancellationToken cancellationToken);
+    Task<Guid> GetUserIdExistByUserNameAndPassword(RequestGetUserIdByUserNameAndPassword request, CancellationToken cancellationToken);
 
     #endregion
 }
@@ -34,16 +30,14 @@ public class UserFacade(ISender sender) : IUserFacade
     public async Task<ServiceResult> CreateUser(CreateUserCommand request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
-    public async Task<ServiceResult> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request,
-        CancellationToken cancellationToken)
+    public async Task<string> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
     #endregion
 
     #region Query
 
-    public async Task<bool> GetUserExistByUserNameAndPassword(RequestGetUserExistByUserNameAndPassword request,
-        CancellationToken cancellationToken)
+    public async Task<Guid> GetUserIdExistByUserNameAndPassword(RequestGetUserIdByUserNameAndPassword request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
     #endregion

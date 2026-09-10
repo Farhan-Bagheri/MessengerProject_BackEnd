@@ -1,4 +1,5 @@
 ﻿using Identity.Application;
+using Identity.Configuration;
 using Identity.Domain.Entities;
 using Identity.Facade.User;
 using Identity.Infrastructure.Context;
@@ -11,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using ShareMicroservice.Common.Class.ApiResult;
 using System.Text;
 
+
 namespace IdentityApi.Config;
 
 public static class WebApiServiceExtensions
@@ -20,10 +22,9 @@ public static class WebApiServiceExtensions
         IConfiguration configuration)
     {
         #region Url
-
         var baseUrl = configuration["AppSettings:BaseUrl"];
         var jwtKey = configuration["Jwt:Key"];
-
+        var connectionString = configuration.GetConnectionString("IdentityDB");
         #endregion
 
         #region Dependcy Injection
@@ -32,15 +33,7 @@ public static class WebApiServiceExtensions
 
         #endregion
 
-        #region DB Context
-
-        services.AddDbContext<IdentityContext>(options =>
-        {
-            options.UseNpgsql(
-                configuration.GetConnectionString("Messenger_Identity"));
-        });
-
-        #endregion
+        services.Configure(connectionString!);
 
         services.AddOpenApi();
 
@@ -103,46 +96,6 @@ public static class WebApiServiceExtensions
 
         #endregion
 
-        #region Swagger
-        /*
-                services.AddEndpointsApiExplorer();
-
-                services.AddSwaggerGen(options =>
-                {
-                    options.SwaggerDoc("v1", new OpenApiInfo
-                    {
-                        Title = "Identity API",
-                        Version = "v1"
-                    });
-
-                    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                    {
-                        Name = "Authorization",
-                        Type = SecuritySchemeType.Http,
-                        Scheme = "Bearer",
-                        BearerFormat = "JWT",
-                        In = ParameterLocation.Header,
-                        Description = "Enter JWT Token"
-                    });
-
-                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                    {
-                                {
-                                    new OpenApiSecurityScheme
-                                    {
-                                        Reference = new OpenApiReference
-                                        {
-                                            Type = ReferenceType.SecurityScheme,
-                                            Id = "Bearer"
-                                        }
-                                    },
-                                    Array.Empty<string>()
-                                }
-                    });
-                });
-        */
-        #endregion
-
         #region Api Validation Error
 
         services.Configure<ApiBehaviorOptions>(options =>
@@ -155,7 +108,7 @@ public static class WebApiServiceExtensions
                     .Select(x => x.ErrorMessage)
                     .ToList();
 
-                var result = ApiResult.Failure("Validation Error", 400, errors);
+                var result = ApiResult.Failure("Validation Error", errors);
 
                 return new BadRequestObjectResult(result);
             };

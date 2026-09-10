@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ShareMicroservice.Common.Class.ApiResult;
 
 namespace IdentityApi.Controllers;
@@ -38,15 +36,13 @@ public class BaseController : ControllerBase
     // اگر برای خطاها لیست دارید، همیشه از این استفاده کنید
     protected ApiResult<T> BadRequestResult<T>(string? message, List<string>? errors = null)
     {
-        Response.StatusCode = 400;
-        return ApiResult<T>.Failure(400, errors, message);
+        return ApiResult<T>.Failure(message, errors);
     }
 
     // اگر فقط یک پیام ساده دارید
     protected ApiResult BadRequestResult(string? message = null)
     {
-        Response.StatusCode = 400;
-        return ApiResult.Failure(message, 400, null);
+        return ApiResult.Failure(message, null);
     }
 
 }

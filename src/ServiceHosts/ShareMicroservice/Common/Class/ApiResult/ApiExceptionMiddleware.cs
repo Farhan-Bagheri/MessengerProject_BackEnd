@@ -41,7 +41,7 @@ public class ApiExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;
 
-        var response = ApiResult.Failure(message, statusCode);
+        var response = ApiResult.Failure(message);
 
         var json = JsonSerializer.Serialize(response);
 

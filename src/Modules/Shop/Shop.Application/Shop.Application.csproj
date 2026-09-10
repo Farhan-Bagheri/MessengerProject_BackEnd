@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="14.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\ShareMicroservice\ShareMicroservice.Application\ShareMicroservice.Application.csproj" />
+      <ProjectReference Include="..\Shop.Infrastructure\Shop.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
