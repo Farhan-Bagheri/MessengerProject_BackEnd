@@ -1,5 +1,5 @@
 using IdentityApi.Config;
-using Scalar.AspNetCore;
+using ShareMicroservice.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +19,8 @@ builder.Configuration
     .AddEnvironmentVariables()
     .Build();
 
+builder.Services.AddOpenApiConfig(builder.Configuration);
+
 builder.Services.AddControllers();
 
 builder.Services.AddWebApiServices(builder.Configuration);
@@ -32,8 +34,10 @@ app.UseRouting();
 
 app.UseGlobalException();
 
-app.MapOpenApi();
-app.MapScalarApiReference();
+app.UseCustomScalar();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

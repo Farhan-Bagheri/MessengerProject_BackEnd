@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace IdentityApi.Controllers;
+namespace ShareMicroservice.Common;
 
 [ApiController]
 public class BaseController : ControllerBase

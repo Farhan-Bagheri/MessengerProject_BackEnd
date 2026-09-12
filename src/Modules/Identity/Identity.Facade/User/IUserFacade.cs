@@ -4,6 +4,7 @@ using Identity.Application.Query.User;
 using MediatR;
 using ShareMicroservice.Application.Common;
 using ShareMicroservice.Common.Api.Jwt;
+using ShareMicroservice.Dto.Response.Identity.User;
 
 namespace Identity.Facade.User;
 
@@ -20,6 +21,7 @@ public interface IUserFacade
     #region Query
 
     Task<Guid> GetUserIdExistByUserNameAndPassword(RequestGetUserIdByUserNameAndPassword request, CancellationToken cancellationToken);
+    Task<GetUserProfileByUserIdentityIdDto> GetUserProfileByUserIdentityId(RequestGetUserProfileByUserIdentityId request, CancellationToken cancellationToken);
 
     #endregion
 }
@@ -32,6 +34,9 @@ public class UserFacade(ISender sender) : IUserFacade
         => await sender.Send(request, cancellationToken);
 
     public async Task<AccessTokenDto> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken)
+        => await sender.Send(request, cancellationToken);
+
+    public async Task<GetUserProfileByUserIdentityIdDto> GetUserProfileByUserIdentityId(RequestGetUserProfileByUserIdentityId request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
     #endregion
