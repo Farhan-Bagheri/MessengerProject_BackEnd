@@ -1,7 +1,8 @@
 using Identity.Facade.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShareMicroservice.Common.Class.ApiResult;
+using ShareMicroservice.Common.Api;
+using ShareMicroservice.Common.Api.Jwt;
 using ShareMicroservice.Dto.Request.Identity;
 
 namespace IdentityApi.Controllers.v1.Account
@@ -30,13 +31,13 @@ namespace IdentityApi.Controllers.v1.Account
                     cancellationToken);
 
                 return result.IsSuccess
-                    ? SuccessResult(result.Data!.ToString())!
-                    : BadRequestResult<string>(result.Message, result.Errorrs);
+                    ? Ok(result.Data!.ToString())!
+                    : BadRequest(result.Message);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                throw;
+                return BadRequest();
             }
         }
 
@@ -45,7 +46,7 @@ namespace IdentityApi.Controllers.v1.Account
         /// </summary>
         /// <returns></returns>
         [HttpPost, AllowAnonymous]
-        public async Task<ApiResult<string>> LoginUserByUserNameAndPassword(
+        public async Task<ApiResult<AccessTokenDto>> LoginUserByUserNameAndPassword(
             RequestLoginUserByUserNameAndPasswordDto request,
             CancellationToken cancellationToken)
         {
@@ -57,17 +58,17 @@ namespace IdentityApi.Controllers.v1.Account
                     cancellationToken);
 
                 if (userId == Guid.Empty)
-                    return BadRequestResult<string>("نام کاربری یا رمز عبور اشتباه است!");
+                    return BadRequest("نام کاربری یا رمز عبور اشتباه است!");
 
                 var jwtKey = configuration["Jwt:Key"];
 
                 var jwtExpiryString = configuration["Jwt:ExpiryMinutes"];
 
                 if (string.IsNullOrWhiteSpace(jwtKey))
-                    return BadRequestResult<string>("تنظیمات JWT به درستی پیکربندی نشده است.");
+                    return BadRequest("تنظیمات JWT به درستی پیکربندی نشده است.");
 
                 if (!int.TryParse(jwtExpiryString, out var jwtExpiry))
-                    return BadRequestResult<string>("زمان انقضای JWT به درستی پیکربندی نشده است.");
+                    return BadRequest("زمان انقضای JWT به درستی پیکربندی نشده است.");
 
                 var token = await userFacade.GeneratedJwtTokenForUser(new(
                     userId.ToString(),
@@ -75,15 +76,15 @@ namespace IdentityApi.Controllers.v1.Account
                     jwtExpiry),
                     cancellationToken);
 
-                if (String.IsNullOrWhiteSpace(token))
-                    return BadRequestResult<string>("خطا در ایجاد توکن ورود.");
+                if (token == null)
+                    return BadRequest("خطا در ایجاد توکن ورود.");
 
-                return SuccessResult(token);
+                return Ok(token);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.Message);
-                throw;
+                return BadRequest();
             }
         }
     }

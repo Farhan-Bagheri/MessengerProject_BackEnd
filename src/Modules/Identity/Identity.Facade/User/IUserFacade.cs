@@ -3,6 +3,7 @@ using Identity.Application.Command.User.Create;
 using Identity.Application.Query.User;
 using MediatR;
 using ShareMicroservice.Application.Common;
+using ShareMicroservice.Common.Api.Jwt;
 
 namespace Identity.Facade.User;
 
@@ -12,7 +13,7 @@ public interface IUserFacade
 
     Task<ServiceResult> CreateUser(CreateUserCommand request, CancellationToken cancellationToken);
 
-    Task<string> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken);
+    Task<AccessTokenDto> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken);
 
     #endregion
 
@@ -30,7 +31,7 @@ public class UserFacade(ISender sender) : IUserFacade
     public async Task<ServiceResult> CreateUser(CreateUserCommand request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
-    public async Task<string> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken)
+    public async Task<AccessTokenDto> GeneratedJwtTokenForUser(GeneratedJwtTokenForUserCommand request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
 
     #endregion

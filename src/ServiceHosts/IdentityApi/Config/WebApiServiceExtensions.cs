@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ShareMicroservice.Common.Class.ApiResult;
 using System.Text;
 
 
@@ -93,26 +92,6 @@ public static class WebApiServiceExtensions
                         Encoding.UTF8.GetBytes(jwtKey!))
                 };
             });
-
-        #endregion
-
-        #region Api Validation Error
-
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.InvalidModelStateResponseFactory = context =>
-            {
-                var errors = context.ModelState
-                    .Where(x => x.Value!.Errors.Count > 0)
-                    .SelectMany(x => x.Value!.Errors)
-                    .Select(x => x.ErrorMessage)
-                    .ToList();
-
-                var result = ApiResult.Failure("Validation Error", errors);
-
-                return new BadRequestObjectResult(result);
-            };
-        });
 
         #endregion
 
