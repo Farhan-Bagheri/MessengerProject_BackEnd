@@ -5,8 +5,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var env = builder.Environment.EnvironmentName;
-var env = "Production";
+var env = builder.Environment.EnvironmentName;
+//var env = "Production";
 
 Console.ForegroundColor = ConsoleColor.Red;
 Console.WriteLine(
@@ -20,6 +20,8 @@ builder.Configuration
     .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()
     .Build();
+
+#region JWT
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
@@ -56,6 +58,8 @@ builder.Services
             };
     });
 
+#endregion
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
@@ -66,16 +70,14 @@ builder.Services.AddHttpClient();
 
 builder.Services
     .AddReverseProxy()
-    .LoadFromConfig(
-        builder.Configuration.GetSection(
-            "ReverseProxy"));
+    .LoadFromConfig(builder.Configuration
+        .GetSection("ReverseProxy"));
 
 var app = builder.Build();
 
 app.UseCustomScalarApi(builder.Configuration);
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
 app.UseAuthentication();
@@ -84,6 +86,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapReverseProxy();
-
 
 app.Run();

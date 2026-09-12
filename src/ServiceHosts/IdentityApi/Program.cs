@@ -5,9 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 var env = builder.Environment.EnvironmentName;
 //var env = "Production";
+
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine($"Application Running With Name : {builder.Environment.ApplicationName} ----> Environment : {env}");
-Console.WriteLine();
+Console.WriteLine(
+    $"Application Running With Name : " +
+    $"{builder.Environment.ApplicationName} ----> Environment : {env}");
+Console.ResetColor();
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
