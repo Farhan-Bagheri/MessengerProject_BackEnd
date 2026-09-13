@@ -4,13 +4,9 @@ using ShopApi.Config;
 var builder = WebApplication.CreateBuilder(args);
 
 var env = builder.Environment.EnvironmentName;
-//var env = "Production";
-
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine(
-    $"Application Running With Name : " +
-    $"{builder.Environment.ApplicationName} ----> Environment : {env}");
-Console.ResetColor();
+Console.WriteLine($"Application Running With Name : {builder.Environment.ApplicationName} ----> Environment : {env}");
+Console.WriteLine();
 
 builder.Services.AddControllers();
 
