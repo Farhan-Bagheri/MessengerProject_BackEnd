@@ -21,20 +21,6 @@ builder.Configuration
     .AddEnvironmentVariables()
     .Build();
 
-builder.Services.AddOpenApiConfig(builder.Configuration);
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Frontend", policy =>
-    {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
-
-
 #region JWT
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -93,8 +79,6 @@ app.UseCustomScalarApi(builder.Configuration);
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();

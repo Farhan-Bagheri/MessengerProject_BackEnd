@@ -1,11 +1,12 @@
-﻿using Asp.Versioning;
-using Identity.Application;
+﻿using Identity.Application;
 using Identity.Configuration;
 using Identity.Domain.Entities;
 using Identity.Facade.User;
 using Identity.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -60,12 +61,7 @@ public static class WebApiServiceExtensions
             options.ApiVersionReader = new UrlSegmentApiVersionReader();
         });
 
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ReportApiVersions = true;
-        }).AddApiExplorer(options =>
+        services.AddVersionedApiExplorer(options =>
         {
             options.GroupNameFormat = "'v'VVV";
             options.SubstituteApiVersionInUrl = true;

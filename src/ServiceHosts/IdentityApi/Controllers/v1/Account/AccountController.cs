@@ -1,12 +1,9 @@
-using Asp.Versioning;
 using Identity.Facade.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShareMicroservice.Common;
 using ShareMicroservice.Common.Api;
 using ShareMicroservice.Common.Api.Jwt;
 using ShareMicroservice.Dto.Request.Identity;
-using ShareMicroservice.Dto.Response.Identity.User;
 
 namespace IdentityApi.Controllers.v1.Account
 {
@@ -90,27 +87,5 @@ namespace IdentityApi.Controllers.v1.Account
                 return BadRequest();
             }
         }
-
-        /// <summary>
-        /// دریافت پروفایل کاربر
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ApiResult<GetUserProfileByUserIdentityIdDto>> GetUserProfile(CancellationToken cancellationToken)
-        {
-            try
-            {
-                var result = await userFacade.GetUserProfileByUserIdentityId(new(GetCurrentUserId), cancellationToken);
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-                return BadRequest();
-            }
-        }
-
     }
 }
