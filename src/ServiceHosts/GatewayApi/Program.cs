@@ -5,85 +5,60 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var env = builder.Environment.EnvironmentName;
-var env = "Production";
-
+var env = builder.Environment.EnvironmentName;
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine(
-    $"Application Running With Name : " +
-    $"{builder.Environment.ApplicationName} ----> Environment : {env}");
-Console.ResetColor();
+Console.WriteLine($"Application Running With Name : {builder.Environment.ApplicationName} ----> Environment : {env}");
+Console.WriteLine();
 
-builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables()
-    .Build();
+#region Jwt
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
-var jwtKey = jwtSettings["Key"];
-
-if (string.IsNullOrWhiteSpace(jwtKey))
-{
-    throw new InvalidOperationException(
-        "JWT Key is not configured.");
-}
-
 builder.Services
-    .AddAuthentication(
-        JwtBearerDefaults.AuthenticationScheme)
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters =
-            new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidIssuer = jwtSettings["Issuer"],
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidIssuer = jwtSettings["Issuer"],
 
-                ValidateAudience = false,
-                ValidAudience = jwtSettings["Audience"],
+            ValidateAudience = false,
+            ValidAudience = jwtSettings["Audience"],
 
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtKey)),
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!)),
 
-                ValidateLifetime = true,
-
-                ClockSkew = TimeSpan.Zero
-            };
+            ValidateLifetime = true
+        };
     });
 
+
+#endregion
+
 builder.Services.AddAuthorization();
+
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddHttpClient();
-
-builder.Services
-    .AddReverseProxy()
-    .LoadFromConfig(
-        builder.Configuration.GetSection(
-            "ReverseProxy"));
-
 var app = builder.Build();
 
-app.UseCustomScalarApi(builder.Configuration);
+if (app.Environment.IsDevelopment())
+{
+    app.UseCustomeScalarApi();
+}
 
 app.UseHttpsRedirection();
-
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.MapReverseProxy();
 
+app.MapControllers();
 
 app.Run();

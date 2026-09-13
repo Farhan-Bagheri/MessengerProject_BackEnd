@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using ShareMicroservice.Common.Api.Jwt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -12,55 +11,51 @@ public record GeneratedJwtTokenForUserCommand(
     string UserId,
     string JwtKey,
     int JwtExpiry)
-    : IRequest<AccessTokenDto>;
+    : IRequest<string>;
 
 public class GeneratedJwtTokenForUserCommandHandler(
     UserManager<Domain.Entities.User> userManager)
-    : IRequestHandler<GeneratedJwtTokenForUserCommand, AccessTokenDto>
+    : IRequestHandler<GeneratedJwtTokenForUserCommand, string>
 {
-    public async Task<AccessTokenDto> Handle(
+    public async Task<string> Handle(
         GeneratedJwtTokenForUserCommand request,
         CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByIdAsync(request.UserId);
-
-        if (user == null)
-            return null;
-
-        var refreshToken = Guid.NewGuid().ToString("N");
-        var refreshTokenSerial = Guid.NewGuid().ToString();
-
-        var expireDate = DateTime.UtcNow.AddMinutes(request.JwtExpiry);
-
-        var claims = new[]
+        try
         {
-            new Claim("Id", user.Id.ToString()),
-            new Claim("Email", user.Email ?? string.Empty),
-            new Claim("UserName", user.UserName ?? string.Empty),
-            new Claim("Jti", Guid.NewGuid().ToString())
-        };
+            var user = await userManager.FindByIdAsync(request.UserId);
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(request.JwtKey));
+            if (user == null)
+                return String.Empty;
 
-        var credentials = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim("Id", user.Id.ToString()),
+                new Claim("Email", user.Email ?? string.Empty),
+                new Claim("UserName", user.UserName ?? string.Empty),
+                new Claim("Jti", Guid.NewGuid().ToString())
+            };
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: expireDate,
-            signingCredentials: credentials);
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(request.JwtKey));
 
-        var accessToken = new JwtSecurityTokenHandler()
-            .WriteToken(token);
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256);
 
-        return new AccessTokenDto
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(request.JwtExpiry),
+                signingCredentials: credentials);
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return tokenString;
+        }
+        catch (Exception ex)
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken,
-            RefreshTokenSerial = refreshTokenSerial,
-            ExpireDate = expireDate
-        };
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 }
