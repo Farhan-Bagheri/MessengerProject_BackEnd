@@ -7,11 +7,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using ShareMicroservice.Common.Class.ApiResult;
 using System.Text;
-
 
 namespace IdentityApi.Config;
 
@@ -21,25 +20,34 @@ public static class WebApiServiceExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        #region Url
+        #region Configuration
+
         var baseUrl = configuration["AppSettings:BaseUrl"];
         var jwtKey = configuration["Jwt:Key"];
-        var connectionString = configuration.GetConnectionString("IdentityDB");
+        var connectionString =
+            configuration.GetConnectionString("IdentityDB");
+
         #endregion
 
-        #region Dependcy Injection
+        #region Dependency Injection
 
         services.AddScoped<IUserFacade, UserFacade>();
 
         #endregion
 
+        #region Database
+
         services.Configure(connectionString!);
 
-        services.AddOpenApi();
+        #endregion
+
+        #region Identity
 
         services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
+
+        #endregion
 
         #region MediatR
 
@@ -59,7 +67,8 @@ public static class WebApiServiceExtensions
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.ReportApiVersions = true;
 
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            options.ApiVersionReader =
+                new UrlSegmentApiVersionReader();
         });
 
         services.AddVersionedApiExplorer(options =>
@@ -73,13 +82,17 @@ public static class WebApiServiceExtensions
         #region JWT
 
         services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+        {
+            options.DefaultAuthenticateScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+
+            options.DefaultChallengeScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters =
+                new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -89,14 +102,48 @@ public static class WebApiServiceExtensions
                     ValidIssuer = baseUrl,
                     ValidAudience = baseUrl,
 
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtKey!))
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtKey!))
                 };
-            });
+        });
+
+        services.AddAuthorization();
 
         #endregion
 
-        #region Api Validation Error
+        #region OpenAPI
+
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer(
+                (document, context, cancellationToken) =>
+                {
+                    document.Components ??= new OpenApiComponents();
+
+                    document.Components.SecuritySchemes =
+                        new Dictionary<string, IOpenApiSecurityScheme>
+                        {
+                            ["Bearer"] =
+                                new OpenApiSecurityScheme
+                                {
+                                    Type = SecuritySchemeType.Http,
+                                    Scheme = "bearer",
+                                    BearerFormat = "JWT",
+                                    Name = "Authorization",
+                                    In = ParameterLocation.Header,
+                                    Description =
+                                        "Enter your JWT Bearer token."
+                                }
+                        };
+
+                    return Task.CompletedTask;
+                });
+        });
+
+        #endregion
+
+        #region API Validation Error
 
         services.Configure<ApiBehaviorOptions>(options =>
         {
@@ -108,7 +155,10 @@ public static class WebApiServiceExtensions
                     .Select(x => x.ErrorMessage)
                     .ToList();
 
-                var result = ApiResult.Failure("Validation Error", errors);
+                var result =
+                    ApiResult.Failure(
+                        "Validation Error",
+                        errors);
 
                 return new BadRequestObjectResult(result);
             };

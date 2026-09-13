@@ -22,7 +22,10 @@ app.UseRouting();
 app.UseGlobalException();
 
 app.MapOpenApi();
-app.MapScalarApiReference();
+app.MapScalarApiReference(options =>
+{
+    options.WithPreferredScheme("Bearer");
+});
 
 app.MapControllers();
 
