@@ -42,7 +42,7 @@ namespace IdentityApi.Controllers.v1.Account
             }
         }
 
-        /// <summary>
+        /// <summary>    
         /// ورود با نام کاربری و رمز عبور
         /// </summary>
         /// <returns></returns>
@@ -62,7 +62,8 @@ namespace IdentityApi.Controllers.v1.Account
                     return BadRequest("نام کاربری یا رمز عبور اشتباه است!");
 
                 var jwtKey = configuration["Jwt:Key"];
-
+                var jwtIssuer = configuration["Jwt:Issuer"];
+                var jwtAudience = configuration["Jwt:Audience"];
                 var jwtExpiryString = configuration["Jwt:ExpiryMinutes"];
 
                 if (string.IsNullOrWhiteSpace(jwtKey))
@@ -74,6 +75,8 @@ namespace IdentityApi.Controllers.v1.Account
                 var token = await userFacade.GeneratedJwtTokenForUser(new(
                     userId.ToString(),
                     jwtKey,
+                    jwtIssuer,
+                    jwtAudience,
                     jwtExpiry),
                     cancellationToken);
 
@@ -87,7 +90,7 @@ namespace IdentityApi.Controllers.v1.Account
         }
 
         /// <summary>
-        /// ورود با نام کاربری و رمز عبور
+        /// پروفایل کاربر
         /// </summary>
         /// <returns></returns>
         [HttpPost]

@@ -21,7 +21,11 @@ public static class WebApiServiceExtensions
     {
         #region Configuration
         var baseUrl = configuration["AppSettings:BaseUrl"];
+
         var jwtKey = configuration["Jwt:Key"];
+        var jwtIssuer = configuration["Jwt:Issuer"];
+        var jwtAudience = configuration["Jwt:Audience"];
+
         var connectionString = configuration.GetConnectionString("IdentityDB");
         #endregion
 
@@ -87,21 +91,51 @@ public static class WebApiServiceExtensions
         })
         .AddJwtBearer(options =>
         {
-            options.TokenValidationParameters =
-                new TokenValidationParameters
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtIssuer,
+
+                ValidateAudience = true,
+                ValidAudience = jwtAudience,
+
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtKey!))
+            };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
+                    Console.ForegroundColor = ConsoleColor.Red;
 
-                    ValidIssuer = baseUrl,
-                    ValidAudience = baseUrl,
+                    Console.WriteLine("========== JWT AUTH FAILED ==========");
+                    Console.WriteLine(context.Exception.Message);
+                    Console.WriteLine(context.Exception);
+                    Console.WriteLine("=====================================");
 
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(jwtKey!))
-                };
+                    Console.ResetColor();
+
+                    return Task.CompletedTask;
+                },
+
+                OnTokenValidated = context =>
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    Console.WriteLine("========== JWT VALIDATED ==========");
+                    Console.WriteLine($"User: {context.Principal?.Identity?.Name}");
+                    Console.WriteLine("===================================");
+
+                    Console.ResetColor();
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddAuthorization();

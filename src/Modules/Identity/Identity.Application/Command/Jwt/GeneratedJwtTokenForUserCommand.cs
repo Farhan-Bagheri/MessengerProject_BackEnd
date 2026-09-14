@@ -11,6 +11,8 @@ namespace Identity.Application.Command.Jwt;
 public record GeneratedJwtTokenForUserCommand(
     string UserId,
     string JwtKey,
+    string JwtIssuer,
+    string JwtAudience,
     int JwtExpiry)
     : IRequest<AccessTokenDto>;
 
@@ -40,14 +42,15 @@ public class GeneratedJwtTokenForUserCommandHandler(
             new Claim("Jti", Guid.NewGuid().ToString())
         };
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(request.JwtKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(request.JwtKey));
 
         var credentials = new SigningCredentials(
             key,
             SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
+            issuer: request.JwtIssuer,
+            audience: request.JwtAudience,
             claims: claims,
             expires: expireDate,
             signingCredentials: credentials);

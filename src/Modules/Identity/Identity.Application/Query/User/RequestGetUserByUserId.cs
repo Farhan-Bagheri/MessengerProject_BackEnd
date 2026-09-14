@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ShareMicroservice.Dto.Response.Identity;
+using ShareMicroservice.Query.Extentions;
 
 namespace Identity.Application.Query.User;
 
@@ -25,9 +26,8 @@ public class RequestGetUserByUserIdHandler(
                 PhoneNumber = user.PhoneNumber,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                BirthDate = user.BirthDate.ToString(),
-                CreatedAt = user.CreatedAt.ToString(),
-                UpdatedAt = user.UpdatedAt.ToString(),
+                CreatedAt = user.CreatedAt.ToPersianDate(),
+                UpdatedAt = user.UpdatedAt.ToPersianDate(),
                 IsActive = user.IsActive
             };
 

@@ -15,11 +15,6 @@ public class User : IdentityUser<Guid>
     public string? LastName { get; set; }
 
     /// <summary>
-    /// Birth Date
-    /// </summary>
-    public DateOnly? BirthDate { get; set; }
-
-    /// <summary>
     /// Created Time
     /// </summary>
     public DateTime CreatedAt { get; set; }

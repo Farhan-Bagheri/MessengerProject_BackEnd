@@ -11,8 +11,6 @@ public class GetUserByUserIdDto
     public string FirstName { get; set; }
     public string LastName { get; set; }
 
-    public string BirthDate { get; set; }
-
     public string CreatedAt { get; set; }
     public string UpdatedAt { get; set; }
 
