@@ -1,4 +1,4 @@
-﻿namespace ShareMicroservice.Common.Api.AppSettingModel;
+﻿namespace ShareMicroservice.Query.Api.AppSettingModel;
 
 /// <summary>
 /// Jwt Config Model on AppSetting Json File

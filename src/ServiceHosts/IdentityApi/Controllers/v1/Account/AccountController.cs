@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShareMicroservice.Dto.Request.Identity;
 using ShareMicroservice.Dto.Response.Identity;
 using ShareMicroservice.Query.Api;
+using ShareMicroservice.Query.Api.Jwt;
 
 namespace IdentityApi.Controllers.v1.Account
 {
@@ -46,7 +47,7 @@ namespace IdentityApi.Controllers.v1.Account
         /// </summary>
         /// <returns></returns>
         [HttpPost, AllowAnonymous]
-        public async Task<ApiResult<string>> LoginUserByUserNameAndPassword(
+        public async Task<ApiResult<AccessTokenDto>> LoginUserByUserNameAndPassword(
             RequestLoginUserByUserNameAndPasswordDto request,
             CancellationToken cancellationToken)
         {
@@ -76,9 +77,6 @@ namespace IdentityApi.Controllers.v1.Account
                     jwtExpiry),
                     cancellationToken);
 
-                if (String.IsNullOrWhiteSpace(token))
-                    return BadRequest("خطا در ایجاد توکن ورود.");
-
                 return Ok(token);
             }
             catch (Exception ex)
@@ -97,9 +95,9 @@ namespace IdentityApi.Controllers.v1.Account
         {
             try
             {
-                var userId = await userFacade.GetUserByUserId(new(GetCurrentUserId), cancellationToken);
+                var result = await userFacade.GetUserByUserId(new(GetCurrentUserId), cancellationToken);
 
-
+                return Ok(result);
             }
             catch (Exception ex)
             {

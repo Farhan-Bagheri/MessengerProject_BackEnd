@@ -1,4 +1,4 @@
-﻿namespace ShareMicroservice.Common.Api.Jwt;
+﻿namespace ShareMicroservice.Query.Api.Jwt;
 
 public class AccessTokenDto
 {
