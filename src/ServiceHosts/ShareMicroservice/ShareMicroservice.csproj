@@ -8,11 +8,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Modules\Identity\Identity.Domain\Identity.Domain.csproj" />
+        <ProjectReference Include="..\..\Modules\ShareMicroservice\ShareMicroservice.Query\ShareMicroservice.Query.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>

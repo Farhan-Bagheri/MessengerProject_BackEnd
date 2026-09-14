@@ -7,13 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Api\ApiException.cs" Link="Api\ApiException.cs" />
-    <Compile Include="..\Api\ApiResult.cs" Link="Api\ApiResult.cs" />
-    <Compile Include="..\Api\ApiResultStatusCode.cs" Link="Api\ApiResultStatusCode.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Api\" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>

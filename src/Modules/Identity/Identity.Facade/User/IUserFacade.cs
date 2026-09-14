@@ -2,7 +2,7 @@
 using Identity.Application.Command.User.Create;
 using Identity.Application.Query.User;
 using MediatR;
-using ShareMicroservice.Application.Common;
+using ShareMicroservice.Application;
 using ShareMicroservice.Dto.Response.Identity;
 
 namespace Identity.Facade.User;

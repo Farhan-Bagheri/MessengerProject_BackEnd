@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BusNet.WebFramework.Api;
+namespace ShareMicroservice.Query.Api;
 
 public enum ApiResultStatusCode
 {

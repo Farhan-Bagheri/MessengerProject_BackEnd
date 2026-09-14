@@ -1,9 +1,9 @@
-﻿using BusNet.Query.DTOs;
-using BusNet.Query.Extensions;
+﻿using ShareMicroservice.Query.Dto;
+using ShareMicroservice.Query.Extentions;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace BusNet.Query.Extensions;
+namespace ShareMicroservice.Query.Extentions;
 
 public static class EnumExtension
 {

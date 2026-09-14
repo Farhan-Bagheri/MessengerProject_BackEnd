@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using ShareMicroservice.Common.Class.ApiResult;
 using System.Text;
 
 namespace IdentityApi.Config;
@@ -21,12 +20,9 @@ public static class WebApiServiceExtensions
         IConfiguration configuration)
     {
         #region Configuration
-
         var baseUrl = configuration["AppSettings:BaseUrl"];
         var jwtKey = configuration["Jwt:Key"];
-        var connectionString =
-            configuration.GetConnectionString("IdentityDB");
-
+        var connectionString = configuration.GetConnectionString("IdentityDB");
         #endregion
 
         #region Dependency Injection
@@ -150,17 +146,19 @@ public static class WebApiServiceExtensions
             options.InvalidModelStateResponseFactory = context =>
             {
                 var errors = context.ModelState
-                    .Where(x => x.Value!.Errors.Count > 0)
+                    .Where(x => x.Value?.Errors.Count > 0)
                     .SelectMany(x => x.Value!.Errors)
                     .Select(x => x.ErrorMessage)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToList();
 
-                var result =
-                    ApiResult.Failure(
-                        "Validation Error",
-                        errors);
-
-                return new BadRequestObjectResult(result);
+                return new BadRequestObjectResult(new
+                {
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "Validation Error",
+                    Errors = errors
+                });
             };
         });
 

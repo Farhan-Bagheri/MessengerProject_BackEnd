@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShareMicroservice.Dto.Request.Identity;
 using ShareMicroservice.Dto.Response.Identity;
+using ShareMicroservice.Query.Api;
 
 namespace IdentityApi.Controllers.v1.Account
 {
@@ -30,8 +31,8 @@ namespace IdentityApi.Controllers.v1.Account
                     cancellationToken);
 
                 return result.IsSuccess
-                    ? SuccessResult(result.Data!.ToString())!
-                    : BadRequestResult<string>(result.Message, result.Errorrs);
+                    ? Ok(result.Data!.ToString())!
+                    : BadRequest(result.Message);
             }
             catch (Exception ex)
             {
@@ -57,17 +58,17 @@ namespace IdentityApi.Controllers.v1.Account
                     cancellationToken);
 
                 if (userId == Guid.Empty)
-                    return BadRequestResult<string>("نام کاربری یا رمز عبور اشتباه است!");
+                    return BadRequest("نام کاربری یا رمز عبور اشتباه است!");
 
                 var jwtKey = configuration["Jwt:Key"];
 
                 var jwtExpiryString = configuration["Jwt:ExpiryMinutes"];
 
                 if (string.IsNullOrWhiteSpace(jwtKey))
-                    return BadRequestResult<string>("تنظیمات JWT به درستی پیکربندی نشده است.");
+                    return BadRequest("تنظیمات JWT به درستی پیکربندی نشده است.");
 
                 if (!int.TryParse(jwtExpiryString, out var jwtExpiry))
-                    return BadRequestResult<string>("زمان انقضای JWT به درستی پیکربندی نشده است.");
+                    return BadRequest("زمان انقضای JWT به درستی پیکربندی نشده است.");
 
                 var token = await userFacade.GeneratedJwtTokenForUser(new(
                     userId.ToString(),
@@ -76,9 +77,9 @@ namespace IdentityApi.Controllers.v1.Account
                     cancellationToken);
 
                 if (String.IsNullOrWhiteSpace(token))
-                    return BadRequestResult<string>("خطا در ایجاد توکن ورود.");
+                    return BadRequest("خطا در ایجاد توکن ورود.");
 
-                return SuccessResult(token);
+                return Ok(token);
             }
             catch (Exception ex)
             {
@@ -96,10 +97,7 @@ namespace IdentityApi.Controllers.v1.Account
         {
             try
             {
-                var userId = await userFacade.GetUserIdExistByUserNameAndPassword(new(
-                    request.UserName,
-                    request.Password),
-                    cancellationToken);
+                var userId = await userFacade.GetUserByUserId(new(GetCurrentUserId), cancellationToken);
 
 
             }

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace BusNet.WebFramework.Api;
+namespace ShareMicroservice.Query.Api;
 
 public class ApiException(
     ApiResultStatusCode statusCode,

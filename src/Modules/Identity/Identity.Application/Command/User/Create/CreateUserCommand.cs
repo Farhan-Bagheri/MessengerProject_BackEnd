@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using ShareMicroservice.Application.Common;
+using ShareMicroservice.Application;
 
 namespace Identity.Application.Command.User.Create;
 

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
-using ShareMicroservice.Common.Class.ApiResult;
 using Shop.Application;
 using Shop.Configuration;
 using System.Text;
@@ -90,14 +89,19 @@ public static class WebApiServiceExtensions
             options.InvalidModelStateResponseFactory = context =>
             {
                 var errors = context.ModelState
-                    .Where(x => x.Value!.Errors.Count > 0)
+                    .Where(x => x.Value?.Errors.Count > 0)
                     .SelectMany(x => x.Value!.Errors)
                     .Select(x => x.ErrorMessage)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToList();
 
-                var result = ApiResult.Failure("Validation Error", errors);
-
-                return new BadRequestObjectResult(result);
+                return new BadRequestObjectResult(new
+                {
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = "Validation Error",
+                    Errors = errors
+                });
             };
         });
 
