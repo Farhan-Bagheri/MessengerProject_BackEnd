@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Configuration", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayApi", "src\ServiceHosts\GatewayApi\GatewayApi.csproj", "{450738B1-8F6E-472E-80AC-06211F737800}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShareMicroservice.Query", "src\Modules\ShareMicroservice\ShareMicroservice.Query\ShareMicroservice.Query.csproj", "{36C86755-4617-4FBC-827E-83B42C6DEC66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{450738B1-8F6E-472E-80AC-06211F737800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{450738B1-8F6E-472E-80AC-06211F737800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{450738B1-8F6E-472E-80AC-06211F737800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36C86755-4617-4FBC-827E-83B42C6DEC66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36C86755-4617-4FBC-827E-83B42C6DEC66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36C86755-4617-4FBC-827E-83B42C6DEC66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36C86755-4617-4FBC-827E-83B42C6DEC66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +149,7 @@ Global
 		{75794042-618D-47C6-9453-8E42BF7ABD1C} = {6B013E21-D560-4DD5-A33F-C798954A1D30}
 		{B9E9E430-9455-48FE-B8D8-96ED0F496507} = {D6D0EE21-D66A-46F3-8D35-B74D437CA8E3}
 		{450738B1-8F6E-472E-80AC-06211F737800} = {221E5CAF-8EE5-4A68-B264-D9EFA3BF6971}
+		{36C86755-4617-4FBC-827E-83B42C6DEC66} = {ADCBC797-7C4D-409A-B1EE-373F96C483B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {452A7126-B245-4D3E-8B0A-409EDA72C455}

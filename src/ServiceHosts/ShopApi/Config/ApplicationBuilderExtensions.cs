@@ -1,6 +1,6 @@
 ﻿using ShareMicroservice.Common.Class.ApiResult;
 
-namespace IdentityApi.Config;
+namespace ShopApi.Config;
 
 public static class ApplicationBuilderExtensions
 {

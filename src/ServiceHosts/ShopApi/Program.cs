@@ -1,4 +1,3 @@
-using IdentityApi.Config;
 using Scalar.AspNetCore;
 using ShopApi.Config;
 

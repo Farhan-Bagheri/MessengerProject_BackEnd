@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Api\ApiException.cs" Link="Api\ApiException.cs" />
+    <Compile Include="..\Api\ApiResult.cs" Link="Api\ApiResult.cs" />
+    <Compile Include="..\Api\ApiResultStatusCode.cs" Link="Api\ApiResultStatusCode.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Api\" />
+  </ItemGroup>
+
+</Project>

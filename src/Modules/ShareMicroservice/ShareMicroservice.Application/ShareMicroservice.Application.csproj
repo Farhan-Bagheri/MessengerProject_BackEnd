@@ -7,10 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Command\" />
+      <Compile Remove="Command\**" />
+      <EmbeddedResource Remove="Command\**" />
+      <None Remove="Command\**" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\ServiceHosts\ShareMicroservice\ShareMicroservice.csproj" />
       <ProjectReference Include="..\ShareMicroservice.Domain\ShareMicroservice.Domain.csproj" />
     </ItemGroup>
 

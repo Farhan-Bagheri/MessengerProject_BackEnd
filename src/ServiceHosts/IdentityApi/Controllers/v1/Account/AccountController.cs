@@ -1,8 +1,8 @@
 using Identity.Facade.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShareMicroservice.Common.Class.ApiResult;
 using ShareMicroservice.Dto.Request.Identity;
+using ShareMicroservice.Dto.Response.Identity;
 
 namespace IdentityApi.Controllers.v1.Account
 {
@@ -79,6 +79,29 @@ namespace IdentityApi.Controllers.v1.Account
                     return BadRequestResult<string>("خطا در ایجاد توکن ورود.");
 
                 return SuccessResult(token);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// ورود با نام کاربری و رمز عبور
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<ApiResult<GetUserByUserIdDto>> GetUserProfile(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var userId = await userFacade.GetUserIdExistByUserNameAndPassword(new(
+                    request.UserName,
+                    request.Password),
+                    cancellationToken);
+
+
             }
             catch (Exception ex)
             {

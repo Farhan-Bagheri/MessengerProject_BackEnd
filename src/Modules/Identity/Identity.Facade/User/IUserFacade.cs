@@ -3,6 +3,7 @@ using Identity.Application.Command.User.Create;
 using Identity.Application.Query.User;
 using MediatR;
 using ShareMicroservice.Application.Common;
+using ShareMicroservice.Dto.Response.Identity;
 
 namespace Identity.Facade.User;
 
@@ -19,7 +20,7 @@ public interface IUserFacade
     #region Query
 
     Task<Guid> GetUserIdExistByUserNameAndPassword(RequestGetUserIdByUserNameAndPassword request, CancellationToken cancellationToken);
-
+    Task<GetUserByUserIdDto> GetUserByUserId(RequestGetUserByUserId request, CancellationToken cancellationToken);
     #endregion
 }
 
@@ -36,9 +37,9 @@ public class UserFacade(ISender sender) : IUserFacade
     #endregion
 
     #region Query
-
     public async Task<Guid> GetUserIdExistByUserNameAndPassword(RequestGetUserIdByUserNameAndPassword request, CancellationToken cancellationToken)
         => await sender.Send(request, cancellationToken);
-
+    public async Task<GetUserByUserIdDto> GetUserByUserId(RequestGetUserByUserId request, CancellationToken cancellationToken)
+        => await sender.Send(request, cancellationToken);
     #endregion
 }
