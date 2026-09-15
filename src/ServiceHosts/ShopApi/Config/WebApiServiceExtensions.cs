@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Shop.Application;
 using Shop.Configuration;
 using System.Text;
@@ -16,7 +16,11 @@ public static class WebApiServiceExtensions
     {
         #region Url
         var baseUrl = configuration["AppSettings:BaseUrl"];
+
         var jwtKey = configuration["Jwt:Key"];
+        var jwtIssuer = configuration["Jwt:Issuer"];
+        var jwtAudience = configuration["Jwt:Audience"];
+
         var connectionString = configuration.GetConnectionString("ShopDB");
         #endregion
 
@@ -25,7 +29,11 @@ public static class WebApiServiceExtensions
 
         #endregion
 
+        #region Database
+
         services.Configure(connectionString!);
+
+        #endregion
 
         services.AddOpenApi();
 
@@ -37,52 +45,101 @@ public static class WebApiServiceExtensions
         });
         #endregion
 
-        #region API Versioning
-
-        services.AddApiVersioning(options =>
-        {
-            options.DefaultApiVersion = new ApiVersion(1, 0);
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.ReportApiVersions = true;
-
-            options.ApiVersionReader = new UrlSegmentApiVersionReader();
-        });
-
-        services.AddVersionedApiExplorer(options =>
-        {
-            options.GroupNameFormat = "'v'VVV";
-            options.SubstituteApiVersionInUrl = true;
-        });
-
-        #endregion
-
         #region JWT
 
         services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+
+            options.DefaultChallengeScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
+                ValidateIssuer = true,
+                ValidIssuer = jwtIssuer,
+
+                ValidateAudience = true,
+                ValidAudience = jwtAudience,
+
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtKey!))
+            };
+
+            options.Events = new JwtBearerEvents
             {
-                options.TokenValidationParameters = new TokenValidationParameters
+                OnAuthenticationFailed = context =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
+                    Console.ForegroundColor = ConsoleColor.Red;
 
-                    ValidIssuer = baseUrl,
-                    ValidAudience = baseUrl,
+                    Console.WriteLine("========== JWT AUTH FAILED ==========");
+                    Console.WriteLine(context.Exception.Message);
+                    Console.WriteLine(context.Exception);
+                    Console.WriteLine("=====================================");
 
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtKey!))
-                };
-            });
+                    Console.ResetColor();
+
+                    return Task.CompletedTask;
+                },
+
+                OnTokenValidated = context =>
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    Console.WriteLine("========== JWT VALIDATED ==========");
+                    Console.WriteLine($"User: {context.Principal?.Identity?.Name}");
+                    Console.WriteLine("===================================");
+
+                    Console.ResetColor();
+
+                    return Task.CompletedTask;
+                }
+            };
+        });
+
+        services.AddAuthorization();
 
         #endregion
 
-        #region Api Validation Error
+        #region OpenAPI
+
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer(
+                (document, context, cancellationToken) =>
+                {
+                    document.Components ??= new OpenApiComponents();
+
+                    document.Components.SecuritySchemes =
+                        new Dictionary<string, IOpenApiSecurityScheme>
+                        {
+                            ["Bearer"] =
+                                new OpenApiSecurityScheme
+                                {
+                                    Type = SecuritySchemeType.Http,
+                                    Scheme = "bearer",
+                                    BearerFormat = "JWT",
+                                    Name = "Authorization",
+                                    In = ParameterLocation.Header,
+                                    Description =
+                                        "Enter your JWT Bearer token."
+                                }
+                        };
+
+                    return Task.CompletedTask;
+                });
+        });
+
+        #endregion
+
+        #region API Validation Error
 
         services.Configure<ApiBehaviorOptions>(options =>
         {
