@@ -8,13 +8,12 @@ namespace Shop.Infrastructure.Context;
 
 public interface IShopContext
 {
-    public DbSet<User> Users { get; set; }
+
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
 }
 public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(options), IShopContext
 {
-    public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
 
@@ -77,7 +76,6 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
         modelBuilder.HasDefaultSchema(ShopSchema.Shop);
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new UserConfig());
         modelBuilder.ApplyConfiguration(new ProductConfig());
         modelBuilder.ApplyConfiguration(new StoreConfig());
     }

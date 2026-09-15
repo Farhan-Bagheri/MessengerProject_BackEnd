@@ -11,10 +11,5 @@ public class StoreConfig : IEntityTypeConfiguration<Store>
         builder.ToTable("Stores");
 
         builder.HasKey(x => x.Id);
-
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.Shops)
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

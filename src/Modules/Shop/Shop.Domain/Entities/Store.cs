@@ -8,9 +8,9 @@ namespace Shop.Domain.Entities;
 public class Store : BaseEntity
 {
     /// <summary>
-    /// آیدی نماینده
+    /// شناسه کاربر
     /// </summary>
-    public long UserId { get; set; }
+    public string UserIdentityId { get; set; }
 
     /// <summary>
     /// نام فروشگاه
@@ -31,8 +31,4 @@ public class Store : BaseEntity
     /// تصویر
     /// </summary>
     public string ImageUrl { get; set; }
-
-    #region Relations
-    public User User { get; set; }
-    #endregion
 }
