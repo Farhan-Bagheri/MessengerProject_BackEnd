@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Shop.Application;
 using Shop.Configuration;
+using Shop.Facade.Product;
 using System.Text;
 
 namespace ShopApi.Config;
@@ -26,6 +27,7 @@ public static class WebApiServiceExtensions
 
         #region Dependcy Injection
 
+        services.AddScoped<IProductFacade, ProductFacade>();
 
         #endregion
 

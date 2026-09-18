@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace IdentityApi.Controllers;
+namespace ShopApi.Controllers;
 
 [ApiController]
 public class BaseController : ControllerBase
 {
-    public string GetCurrentUserId
+    public string? GetCurrentUserId
     {
         get
         {
@@ -13,7 +13,7 @@ public class BaseController : ControllerBase
             {
                 if (User is { Identity.IsAuthenticated: true })
                 {
-                    string userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+                    string? userId = User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
                     return string.IsNullOrWhiteSpace(userId) ? null : userId;
                 }
 

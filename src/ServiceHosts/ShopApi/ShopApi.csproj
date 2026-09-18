@@ -2,10 +2,10 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,10 +24,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Modules\Shop\Shop.Configuration\Shop.Configuration.csproj" />
 		<ProjectReference Include="..\ShareMicroservice\ShareMicroservice.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Controllers\" />
 	</ItemGroup>
 
 </Project>

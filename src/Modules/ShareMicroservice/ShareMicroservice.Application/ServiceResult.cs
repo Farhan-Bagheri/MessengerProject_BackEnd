@@ -30,3 +30,40 @@ public class ServiceResult
         };
     }
 }
+
+public class ServiceResult<T>
+{
+    public bool IsSuccess { get; set; }
+
+    public T? Data { get; set; }
+
+    public string? Message { get; set; }
+
+    public List<string>? Errors { get; set; }
+
+    public static ServiceResult<T> Success(
+        T? data = default,
+        string? message = "Success")
+    {
+        return new ServiceResult<T>
+        {
+            IsSuccess = true,
+            Data = data,
+            Message = message
+        };
+    }
+
+    public static ServiceResult<T> Error(
+        T? data = default,
+        string? message = "Error",
+        List<string>? errors = null)
+    {
+        return new ServiceResult<T>
+        {
+            IsSuccess = false,
+            Data = data,
+            Message = message,
+            Errors = errors
+        };
+    }
+}

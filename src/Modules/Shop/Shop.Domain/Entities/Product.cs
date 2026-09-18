@@ -19,12 +19,11 @@ public class Product : BaseEntity
     public string Description { get; set; }
 
     /// <summary>
-    /// اسلاگ
-    /// </summary>
-    public string Slug { get; set; }
-
-    /// <summary>
     /// تصاویر
     /// </summary>
     public List<ImageUrl> Images { get; set; } = [];
+
+    #region Releation
+    public IEnumerable<StoreProduct> StoreProducts { get; set; }
+    #endregion
 }

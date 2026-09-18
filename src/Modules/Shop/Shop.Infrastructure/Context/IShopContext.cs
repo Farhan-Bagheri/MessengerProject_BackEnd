@@ -3,6 +3,7 @@ using ShareMicroservice.Domain.Entities;
 using Shop.Domain.Const;
 using Shop.Domain.Entities;
 using Shop.Infrastructure.Configurations;
+using System.Linq.Expressions;
 
 namespace Shop.Infrastructure.Context;
 
@@ -11,15 +12,56 @@ public interface IShopContext
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
+    public DbSet<StoreProduct> StoreProducts { get; set; }
+
+    int SaveChanges();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(options), IShopContext
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
+    public DbSet<StoreProduct> StoreProducts { get; set; }
+
+    #region OnModelCreating
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasDefaultSchema(ShopSchema.Shop);
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfiguration(new ProductConfig());
+        modelBuilder.ApplyConfiguration(new StoreConfig());
+        modelBuilder.ApplyConfiguration(new StoreProductConfig());
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                entityType.SetQueryFilter(CreateIsDeleteFilter(entityType.ClrType));
+            }
+        }
+    }
+
+    private static LambdaExpression CreateIsDeleteFilter(Type entityType)
+    {
+        var parameter = Expression.Parameter(entityType, "e");
+
+        var property = Expression.Property(
+            parameter,
+            nameof(BaseEntity.IsDelete));
+
+        var body = Expression.Equal(
+            property,
+            Expression.Constant(false));
+
+        return Expression.Lambda(body, parameter);
+    }
+    #endregion
 
     #region SaveChange
     public override int SaveChanges()
     {
+        SetSoftDelete();
         SetAuditProperties();
 
         try
@@ -28,13 +70,14 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
         }
         catch (DbUpdateConcurrencyException)
         {
-            throw new DbUpdateConcurrencyException(
-                "A concurrency conflict occurred while saving changes.");
+            throw new DbUpdateConcurrencyException("A concurrency conflict occurred while saving changes.");
         }
     }
 
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default)
     {
+        SetSoftDelete();
         SetAuditProperties();
 
         try
@@ -43,8 +86,19 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
         }
         catch (DbUpdateConcurrencyException)
         {
-            throw new DbUpdateConcurrencyException(
-                "A concurrency conflict occurred while saving changes.");
+            throw new DbUpdateConcurrencyException("A concurrency conflict occurred while saving changes.");
+        }
+    }
+
+    private void SetSoftDelete()
+    {
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            if (entry.State == EntityState.Deleted)
+            {
+                entry.State = EntityState.Modified;
+                entry.Entity.IsDelete = true;
+            }
         }
     }
 
@@ -67,17 +121,6 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
                     break;
             }
         }
-    }
-    #endregion
-
-    #region OnModelCreating
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.HasDefaultSchema(ShopSchema.Shop);
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.ApplyConfiguration(new ProductConfig());
-        modelBuilder.ApplyConfiguration(new StoreConfig());
     }
     #endregion
 }

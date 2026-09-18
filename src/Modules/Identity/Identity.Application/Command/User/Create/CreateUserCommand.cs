@@ -1,14 +1,17 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using ShareMicroservice.Application;
+using ShareMicroservice.Application.BaseCommand;
 
 namespace Identity.Application.Command.User.Create;
 
 public record CreateUserCommand(string UserName, string Password, string ConfirmPassword)
-    : IRequest<ServiceResult>;
+    : IBaseRequest;
 
-public class CreateUserCommandHandler(UserManager<Domain.Entities.User> userManager)
-    : IRequestHandler<CreateUserCommand, ServiceResult>
+public class CreateUserCommandHandler(
+    UserManager<Domain.Entities.User> userManager,
+    ILogger<CreateUserCommandHandler> logger)
+    : IBaseRequestHandler<CreateUserCommand>
 {
     public async Task<ServiceResult> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
@@ -37,7 +40,7 @@ public class CreateUserCommandHandler(UserManager<Domain.Entities.User> userMana
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            logger.LogError(ex, "Error occurred while creating user: {Message}", ex.Message);
             throw;
         }
     }

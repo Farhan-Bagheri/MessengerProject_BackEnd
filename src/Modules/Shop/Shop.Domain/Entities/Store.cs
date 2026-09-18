@@ -31,4 +31,8 @@ public class Store : BaseEntity
     /// تصویر
     /// </summary>
     public string ImageUrl { get; set; }
+
+    #region Releation
+    public IEnumerable<StoreProduct> StoreProducts { get; set; }
+    #endregion
 }

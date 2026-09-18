@@ -32,7 +32,7 @@ app.UseGlobalException();
 app.MapOpenApi();
 app.MapScalarApiReference(options =>
 {
-    options.WithPreferredScheme("Bearer");
+    options.AddPreferredSecuritySchemes("Bearer");
 });
 
 app.MapControllers();

@@ -1,6 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using ShareMicroservice.Application.BaseCommand;
 using ShareMicroservice.Query.Api.Jwt;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,11 +14,11 @@ public record GeneratedJwtTokenForUserCommand(
     string JwtIssuer,
     string JwtAudience,
     int JwtExpiry)
-    : IRequest<AccessTokenDto>;
+    : IBaseCommand<AccessTokenDto>;
 
 public class GeneratedJwtTokenForUserCommandHandler(
     UserManager<Domain.Entities.User> userManager)
-    : IRequestHandler<GeneratedJwtTokenForUserCommand, AccessTokenDto>
+    : IBaseCommandHandler<GeneratedJwtTokenForUserCommand, AccessTokenDto>
 {
     public async Task<AccessTokenDto> Handle(
         GeneratedJwtTokenForUserCommand request,
