@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShareMicroservice.Application;
 using ShareMicroservice.Application.BaseCommand;
-using ShareMicroservice.Domain.Class;
+using Shop.Domain.Class;
 using Shop.Infrastructure.Context;
 
 namespace Shop.Application.Command.Product;
@@ -11,7 +11,7 @@ namespace Shop.Application.Command.Product;
 public record CreateProductCommand(
     string Title,
     string Description,
-    List<string> Images) : IBaseRequest;
+    List<ProductImageUrl> Images) : IBaseRequest;
 public class CreateProductCommandHandker(
     IShopContext context,
     ILogger<CreateProductCommandHandker> logger) : IBaseRequestHandler<CreateProductCommand>
@@ -20,14 +20,10 @@ public class CreateProductCommandHandker(
     {
         try
         {
-            var product = new Domain.Entities.Product
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Images = request.Images
-                    .Select(x => new ImageUrl { Url = x })
-                    .ToList()
-            };
+            var product = new Domain.Entities.Product().Create(
+                request.Title,
+                request.Description,
+                request.Images);
 
             await context.Products.AddAsync(product, cancellationToken);
 
