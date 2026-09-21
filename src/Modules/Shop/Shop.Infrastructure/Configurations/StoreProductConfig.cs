@@ -12,8 +12,7 @@ public class StoreProductConfig : IEntityTypeConfiguration<StoreProduct>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Slug).IsUnicode();
-        builder.HasIndex(x => x.Slug);
+        builder.HasIndex(x => x.Slug).IsUnique();
 
         builder.HasOne(x => x.Product)
             .WithMany(x => x.StoreProducts)

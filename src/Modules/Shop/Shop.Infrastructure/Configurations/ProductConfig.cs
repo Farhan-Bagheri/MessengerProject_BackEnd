@@ -12,6 +12,8 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
 
         builder.HasKey(x => x.Id);
 
+        builder.HasIndex(x => x.UniqueCode).IsUnique();
+
         builder.OwnsMany(x => x.Images, o =>
         {
             o.ToJson();

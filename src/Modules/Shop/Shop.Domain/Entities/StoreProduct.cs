@@ -1,4 +1,5 @@
 ﻿using ShareMicroservice.Domain.Entities;
+using Shop.Domain.Extension;
 
 namespace Shop.Domain.Entities;
 
@@ -18,14 +19,14 @@ public class StoreProduct : BaseEntity
     public int StockQuantity { get; set; }
 
     /// <summary>
-    /// در دسترس است؟
-    /// </summary>
-    public bool IsActive { get; set; }
-
-    /// <summary>
     /// اسلاگ
     /// </summary>
     public string Slug { get; set; }
+
+    /// <summary>
+    /// در دسترس است؟
+    /// </summary>
+    public bool IsActive { get; set; }
 
     #region Releation
     /// <summary>
@@ -39,5 +40,24 @@ public class StoreProduct : BaseEntity
     /// </summary>
     public long StoreId { get; set; }
     public Store Store { get; set; }
+    #endregion
+
+    #region Method
+    public void Create(long price, int stockQuantity, bool isActive, long productId, long storeId)
+    {
+        Price = price;
+        StockQuantity = stockQuantity;
+        IsActive = isActive;
+        ProductId = productId;
+        StoreId = storeId;
+        Slug = $"{Product.Title.ToSlug()}-{Product.UniqueCode}-{Store.UniqueCode}";
+    }
+
+    public void Edit(long price, int stockQuantity, bool isActive)
+    {
+        Price = price;
+        StockQuantity = stockQuantity;
+        IsActive = isActive;
+    }
     #endregion
 }

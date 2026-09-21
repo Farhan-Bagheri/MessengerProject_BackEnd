@@ -11,5 +11,7 @@ public class StoreConfig : IEntityTypeConfiguration<Store>
         builder.ToTable("Stores");
 
         builder.HasKey(x => x.Id);
+
+        builder.HasIndex(x => x.UniqueCode).IsUnique();
     }
 }

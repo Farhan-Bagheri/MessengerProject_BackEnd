@@ -1,4 +1,5 @@
 ﻿using ShareMicroservice.Domain.Entities;
+using Shop.Domain.Method;
 
 namespace Shop.Domain.Entities;
 
@@ -23,16 +24,33 @@ public class Store : BaseEntity
     public string PhoneNumber { get; set; }
 
     /// <summary>
-    /// آدرس
+    /// شناسه منحصر به فرد
     /// </summary>
-    public string Address { get; set; }
+    public string UniqueCode { get; set; }
 
     /// <summary>
     /// تصویر
     /// </summary>
-    public string ImageUrl { get; set; }
+    public string AvatarUrl { get; set; }
 
     #region Releation
-    public IEnumerable<StoreProduct> StoreProducts { get; set; }
+    public ICollection<StoreProduct> StoreProducts { get; set; } = [];
+    #endregion
+
+    #region Method
+    public void Create(string name, string phoneNumber, string avatarUrl)
+    {
+        Name = name;
+        PhoneNumber = phoneNumber;
+        AvatarUrl = avatarUrl;
+        UniqueCode = UniqueCodeGenerator.Generate();
+    }
+
+    public void Edit(string name, string phoneNumber, string avatarUrl)
+    {
+        Name = name;
+        PhoneNumber = phoneNumber;
+        AvatarUrl = avatarUrl;
+    }
     #endregion
 }

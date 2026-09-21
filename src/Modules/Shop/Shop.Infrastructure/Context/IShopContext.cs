@@ -13,6 +13,7 @@ public interface IShopContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<StoreProduct> StoreProducts { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
@@ -22,6 +23,8 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<StoreProduct> StoreProducts { get; set; }
+    public DbSet<Category> Categories { get; set; }
+
 
     #region OnModelCreating
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +35,7 @@ public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(opti
         modelBuilder.ApplyConfiguration(new ProductConfig());
         modelBuilder.ApplyConfiguration(new StoreConfig());
         modelBuilder.ApplyConfiguration(new StoreProductConfig());
+        modelBuilder.ApplyConfiguration(new CategoryConfig());
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
