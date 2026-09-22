@@ -1,26 +1,24 @@
 ﻿using Microsoft.Extensions.Logging;
 using ShareMicroservice.Application;
-using ShareMicroservice.Application.BaseCommand;
+using ShareMicroservice.Application.IBaseRequest;
 using Shop.Domain.Class;
 using Shop.Infrastructure.Context;
 
 namespace Shop.Application.Command.Product;
 
-
-
 public record CreateProductCommand(
     string Title,
     string Description,
     List<ProductImageUrl> Images) : IBaseRequest;
-public class CreateProductCommandHandker(
+public class CreateProductCommandHandler(
     IShopContext context,
-    ILogger<CreateProductCommandHandker> logger) : IBaseRequestHandler<CreateProductCommand>
+    ILogger<CreateProductCommandHandler> logger) : IBaseRequestHandler<CreateProductCommand>
 {
     public async Task<ServiceResult> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var product = new Domain.Entities.Product().Create(
+            var product = new Domain.Entities.Product(
                 request.Title,
                 request.Description,
                 request.Images);

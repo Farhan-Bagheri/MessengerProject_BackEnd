@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace ShareMicroservice.Application.BaseCommand;
+namespace ShareMicroservice.Application.IBaseRequest;
 
 public interface IBaseRequest : IRequest<ServiceResult>
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ShareMicroservice.Application.BaseCommand;
+using ShareMicroservice.Application.IBaseRequest;
 using ShareMicroservice.Query.Extentions;
 using Shop.Application.Dto.Response.Product;
 using Shop.Infrastructure.Context;
@@ -23,9 +23,9 @@ public class RequestGetProductByIdHandler(
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
+                    Images = x.Images,
                     CreatedAt = x.CreatedAt.ToPersianDate(),
-                    UpdatedAt = x.UpdatedAt.ToPersianDate(),
-                    Images = x.Images
+                    UpdatedAt = x.UpdatedAt.ToPersianDate()
                 }).FirstOrDefaultAsync(cancellationToken);
 
             return product;

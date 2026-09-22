@@ -35,4 +35,19 @@ public class Category : BaseEntity
     /// </summary>
     public ICollection<Category> Childs { get; set; } = [];
     #endregion
+
+    #region Method
+    public Category()
+    {
+
+    }
+
+    public Category(string name, string slug, CategoryStatusType statusType, long parentId)
+    {
+        Name = name;
+        Slug = slug;
+        StatusType = statusType;
+        ParentId = parentId;
+    }
+    #endregion
 }

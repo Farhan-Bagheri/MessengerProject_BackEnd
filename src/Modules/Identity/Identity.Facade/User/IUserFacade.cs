@@ -1,9 +1,9 @@
 ﻿using Identity.Application.Command.Jwt;
 using Identity.Application.Command.User.Create;
+using Identity.Application.Dto.Response.Identity;
 using Identity.Application.Query.User;
 using MediatR;
 using ShareMicroservice.Application;
-using ShareMicroservice.Dto.Response.Identity;
 using ShareMicroservice.Query.Api.Jwt;
 
 namespace Identity.Facade.User;

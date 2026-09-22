@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace ShareMicroservice.Dto.Request.Identity;
+namespace Identity.Application.Dto.Request.Identity;
 
 public class RequestLoginUserByUserNameAndPasswordDto
 {

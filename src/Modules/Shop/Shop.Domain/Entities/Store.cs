@@ -38,8 +38,14 @@ public class Store : BaseEntity
     #endregion
 
     #region Method
-    public void Create(string name, string phoneNumber, string avatarUrl)
+    public Store()
     {
+
+    }
+
+    public Store(string userIdentityId, string name, string phoneNumber, string avatarUrl)
+    {
+        UserIdentityId = userIdentityId;
         Name = name;
         PhoneNumber = phoneNumber;
         AvatarUrl = avatarUrl;

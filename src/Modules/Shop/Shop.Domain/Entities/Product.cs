@@ -34,7 +34,13 @@ public class Product : BaseEntity
     #endregion
 
     #region Method
-    public void Create(string title, string description, List<ProductImageUrl> images)
+
+    public Product()
+    {
+
+    }
+
+    public Product(string title, string description, List<ProductImageUrl> images)
     {
         Title = title;
         Description = description;

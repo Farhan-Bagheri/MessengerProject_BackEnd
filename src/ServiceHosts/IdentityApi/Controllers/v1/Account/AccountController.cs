@@ -1,8 +1,8 @@
+using Identity.Application.Dto.Request.Identity;
+using Identity.Application.Dto.Response.Identity;
 using Identity.Facade.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShareMicroservice.Dto.Request.Identity;
-using ShareMicroservice.Dto.Response.Identity;
 using ShareMicroservice.Query.Api;
 using ShareMicroservice.Query.Api.Jwt;
 

@@ -1,7 +1,6 @@
 ﻿using Identity.Application;
 using Identity.Configuration;
 using Identity.Domain.Entities;
-using Identity.Facade.User;
 using Identity.Infrastructure.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -29,38 +28,24 @@ public static class WebApiServiceExtensions
         var connectionString = configuration.GetConnectionString("IdentityDB");
         #endregion
 
-        #region Dependency Injection
-
-        services.AddScoped<IUserFacade, UserFacade>();
-
-        #endregion
-
         #region Database
-
         services.Configure(connectionString!);
-
         #endregion
 
         #region Identity
-
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<IdentityContext>()
             .AddDefaultTokenProviders();
-
         #endregion
 
         #region MediatR
-
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(
-                typeof(ApplicationAssemblyReference).Assembly);
+            cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyReference).Assembly);
         });
-
         #endregion
 
         #region API Versioning
-
         services.AddApiVersioning(options =>
         {
             options.DefaultApiVersion = new ApiVersion(1, 0);
@@ -76,11 +61,9 @@ public static class WebApiServiceExtensions
             options.GroupNameFormat = "'v'VVV";
             options.SubstituteApiVersionInUrl = true;
         });
-
         #endregion
 
         #region JWT
-
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme =
@@ -101,7 +84,6 @@ public static class WebApiServiceExtensions
 
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-
 
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(jwtKey!))
@@ -139,42 +121,35 @@ public static class WebApiServiceExtensions
         });
 
         services.AddAuthorization();
-
         #endregion
 
         #region OpenAPI
-
         services.AddOpenApi(options =>
         {
-            options.AddDocumentTransformer(
-                (document, context, cancellationToken) =>
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new OpenApiComponents();
+
+                document.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>
                 {
-                    document.Components ??= new OpenApiComponents();
-
-                    document.Components.SecuritySchemes =
-                        new Dictionary<string, IOpenApiSecurityScheme>
-                        {
-                            ["Bearer"] =
-                                new OpenApiSecurityScheme
-                                {
-                                    Type = SecuritySchemeType.Http,
-                                    Scheme = "bearer",
-                                    BearerFormat = "JWT",
-                                    Name = "Authorization",
-                                    In = ParameterLocation.Header,
-                                    Description =
-                                        "Enter your JWT Bearer token."
-                                }
-                        };
-
-                    return Task.CompletedTask;
-                });
+                    ["Bearer"] =
+                            new OpenApiSecurityScheme
+                            {
+                                Type = SecuritySchemeType.Http,
+                                Scheme = "bearer",
+                                BearerFormat = "JWT",
+                                Name = "Authorization",
+                                In = ParameterLocation.Header,
+                                Description =
+                                    "Enter your JWT Bearer token."
+                            }
+                };
+                return Task.CompletedTask;
+            });
         });
-
         #endregion
 
         #region API Validation Error
-
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
@@ -195,7 +170,6 @@ public static class WebApiServiceExtensions
                 });
             };
         });
-
         #endregion
 
         return services;

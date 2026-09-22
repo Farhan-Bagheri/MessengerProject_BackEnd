@@ -1,4 +1,4 @@
-﻿namespace ShareMicroservice.Dto.Response.Identity;
+﻿namespace Identity.Application.Dto.Response.Identity;
 
 public class GetUserByUserIdDto
 {

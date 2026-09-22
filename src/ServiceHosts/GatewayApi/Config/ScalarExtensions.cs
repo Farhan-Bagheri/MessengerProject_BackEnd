@@ -36,7 +36,7 @@ public static class ScalarExtensions
                 isFirst = false;
             }
 
-            options.WithPreferredScheme("Bearer");
+            options.AddPreferredSecuritySchemes("Bearer");
         });
 
         return app;

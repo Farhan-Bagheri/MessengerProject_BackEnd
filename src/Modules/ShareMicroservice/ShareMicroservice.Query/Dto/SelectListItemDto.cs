@@ -1,3 +1,18 @@
-namespace ShareMicroservice.Query.Dto;
+﻿namespace ShareMicroservice.Query.Dto;
 
-public record SelectListItemDto(string Value, string Text);
+public class SelectListItemDto
+{
+    public SelectListItemDto()
+    {
+
+    }
+
+    public SelectListItemDto(object value, string text)
+    {
+        Value = value;
+        Text = text;
+    }
+
+    public object Value { get; set; }
+    public string Text { get; set; }
+}

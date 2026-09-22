@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Shop.Application;
 using Shop.Configuration;
-using Shop.Facade.Product;
 using System.Text;
 
 namespace ShopApi.Config;
@@ -25,30 +24,18 @@ public static class WebApiServiceExtensions
         var connectionString = configuration.GetConnectionString("ShopDB");
         #endregion
 
-        #region Dependcy Injection
-
-        services.AddScoped<IProductFacade, ProductFacade>();
-
-        #endregion
-
         #region Database
-
         services.Configure(connectionString!);
-
         #endregion
-
-        services.AddOpenApi();
 
         #region MediatR
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(
-                typeof(ApplicationAssemblyReference).Assembly);
+            cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyReference).Assembly);
         });
         #endregion
 
         #region JWT
-
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme =
@@ -69,7 +56,6 @@ public static class WebApiServiceExtensions
 
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-
 
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(jwtKey!))
@@ -107,42 +93,33 @@ public static class WebApiServiceExtensions
         });
 
         services.AddAuthorization();
-
         #endregion
 
         #region OpenAPI
-
         services.AddOpenApi(options =>
         {
-            options.AddDocumentTransformer(
-                (document, context, cancellationToken) =>
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new OpenApiComponents();
+
+                document.Components.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>
                 {
-                    document.Components ??= new OpenApiComponents();
-
-                    document.Components.SecuritySchemes =
-                        new Dictionary<string, IOpenApiSecurityScheme>
-                        {
-                            ["Bearer"] =
-                                new OpenApiSecurityScheme
-                                {
-                                    Type = SecuritySchemeType.Http,
-                                    Scheme = "bearer",
-                                    BearerFormat = "JWT",
-                                    Name = "Authorization",
-                                    In = ParameterLocation.Header,
-                                    Description =
-                                        "Enter your JWT Bearer token."
-                                }
-                        };
-
-                    return Task.CompletedTask;
-                });
+                    ["Bearer"] = new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer",
+                        BearerFormat = "JWT",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Description = "Enter your JWT Bearer token."
+                    }
+                };
+                return Task.CompletedTask;
+            });
         });
-
         #endregion
 
         #region API Validation Error
-
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
@@ -163,7 +140,6 @@ public static class WebApiServiceExtensions
                 });
             };
         });
-
         #endregion
 
         return services;

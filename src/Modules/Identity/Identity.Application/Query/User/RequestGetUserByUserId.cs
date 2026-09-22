@@ -1,7 +1,7 @@
-﻿using MediatR;
+﻿using Identity.Application.Dto.Response.Identity;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using ShareMicroservice.Dto.Response.Identity;
 using ShareMicroservice.Query.Extentions;
 
 namespace Identity.Application.Query.User;

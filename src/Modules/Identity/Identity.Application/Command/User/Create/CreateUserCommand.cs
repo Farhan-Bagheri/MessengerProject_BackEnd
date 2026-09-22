@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ShareMicroservice.Application;
-using ShareMicroservice.Application.BaseCommand;
+using ShareMicroservice.Application.IBaseRequest;
 
 namespace Identity.Application.Command.User.Create;
 
